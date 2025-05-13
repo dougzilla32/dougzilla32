@@ -1,0 +1,134 @@
+name: Update Profile README
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Runs weekly on Sunday at midnight
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout profile repository
+        uses: actions/checkout@v3
+        with:
+          path: profile-repo
+          repository: dougzilla32/dougzilla32
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install pygithub
+
+      - name: Generate README from repositories
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        run: |
+          python -c "
+import os
+import re
+from github import Github
+import base64
+from datetime import datetime
+
+# Initialize GitHub client
+token = os.environ['GITHUB_TOKEN']
+g = Github(token)
+user = g.get_user()
+
+# Start building the main README content
+main_readme = f'# Doug Stein\'s GitHub Projects\\n\\n'
+main_readme += 'Welcome to my GitHub profile! Below you\'ll find descriptions of my projects, including private repositories. '
+main_readme += 'Click on the project names to see detailed documentation.\\n\\n'
+main_readme += '## Projects\\n\\n'
+
+# Process each repository
+for repo in user.get_repos():
+    # Skip forked repositories if desired
+    if repo.fork:
+        continue
+        
+    try:
+        # Get the repository description from the About section
+        description = repo.description or 'No description available'
+        
+        # Try to get the repository README content
+        try:
+            readme_file = repo.get_readme()
+            readme_content = base64.b64decode(readme_file.content).decode('utf-8')
+            
+            # Extract first heading for title, if available
+            title_match = re.search(r'# (.+?)\\n', readme_content)
+            title = title_match.group(1) if title_match else repo.name
+        except:
+            # If no README or can't be decoded, just use the repo name
+            readme_content = f'# {repo.name}\\n\\nNo README available for this repository.'
+            title = repo.name
+        
+        # Get repository topics/tags
+        topics = repo.get_topics()
+        
+        # Add to main README
+        main_readme += f'### [{title}](./project-readmes/{repo.name}.md)\\n\\n'
+        main_readme += f'{description}\\n\\n'
+        
+        if topics:
+            main_readme += 'Technologies: ' + ', '.join(f'`{topic}`' for topic in topics) + '\\n\\n'
+            
+        # Note if it's private
+        if repo.private:
+            main_readme += '> 🔒 Private repository\\n\\n'
+        else:
+            main_readme += f'[View Repository]({repo.html_url})\\n\\n'
+            
+        # Add a divider
+        main_readme += '---\\n\\n'
+        
+        # Create directory for individual READMEs if it doesn't exist
+        os.makedirs('profile-repo/project-readmes', exist_ok=True)
+        
+        # Modify the README content to include repository info at the top
+        repo_info = f'# {title}\\n\\n'
+        if description and description != 'No description available':
+            repo_info += f'{description}\\n\\n'
+        repo_info += f'> {'🔒 Private Repository' if repo.private else f'[View Repository]({repo.html_url})'}\\n\\n'
+        
+        if topics:
+            repo_info += 'Technologies: ' + ', '.join(f'`{topic}`' for topic in topics) + '\\n\\n'
+            
+        repo_info += '---\\n\\n'
+        
+        # Save the individual README file, replacing the original title to avoid duplication
+        if title_match:
+            modified_readme = readme_content.replace(title_match.group(0), repo_info, 1)
+        else:
+            modified_readme = repo_info + readme_content
+        
+        with open(f'profile-repo/project-readmes/{repo.name}.md', 'w') as f:
+            f.write(modified_readme)
+            
+    except Exception as e:
+        print(f'Error processing {repo.name}: {str(e)}')
+        continue
+
+# Add footer to main README
+main_readme += '\\n\\n*Last updated: ' + datetime.now().strftime('%Y-%m-%d') + '*\\n'
+main_readme += '\\n\\nThis profile is automatically generated from my repository information'
+
+# Write the main README file
+with open('profile-repo/README.md', 'w') as f:
+    f.write(main_readme)
+          "
+
+      - name: Commit and push if changed
+        run: |
+          cd profile-repo
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add README.md project-readmes/
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update profile README and project documentation"
+          git push
