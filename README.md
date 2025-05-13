@@ -4,13 +4,29 @@ Welcome to my GitHub profile! Below you'll find descriptions of my projects, inc
 
 ## Projects
 
-### [Quick Start](https://github.com/mxcl/PromiseKit)
+### [PromiseKit](https://github.com/mxcl/PromiseKit)
 
 Promises for Swift & ObjC.
 
 Technologies: `swift`, `objc`, `promises`
 
-[View Repository](https://github.com/mxcl/PromiseKit)
+### [PromiseKit 6 Released](https://github.com/dougzilla32/PromiseKitCoreCancel)
+
+'Cancel' for PromiseKit -- mirror of old PromiseKit fork with CoreCancel branch
+
+---
+
+### [WeatherBar: A macOS Weather App with Elegant UI](./project-readmes/WeatherBar.md)
+
+WeatherBar is a lightweight, elegant macOS menu bar application that provides quick access to weather information directly from your desktop.
+
+> 🔒 Private repository
+
+### [Weather Data](./project-readmes/NOAA-Weather-Bar.md)
+
+Temp and forecast in the Mac's menu bar
+
+> 🔒 Private repository
 
 ---
 
@@ -20,15 +36,21 @@ Sweep N' Park is a navigation app that helps users find parking in San Francisco
 
 Technologies: `parking`
 
-> 🔒 Private repository (documentation available)
+> 🔒 Private repository
 
----
+### SweepHash
 
-### [WeatherBar: A macOS Weather App with Elegant UI](./project-readmes/WeatherBar.md)
+Hash code generator for Sweep N Park app
 
-WeatherBar is a lightweight, elegant macOS menu bar application that provides quick access to weather information directly from your desktop.
+> 🔒 Private repository
 
-> 🔒 Private repository (documentation available)
+### [SweepData](https://github.com/dougzilla32/SweepData)
+
+Route data for SweepNPark
+
+### [SweepNPark-Issues](https://github.com/dougzilla32/SweepNPark-Issues)
+
+Issue tracking for the SweepNPark app
 
 ---
 
@@ -36,15 +58,7 @@ WeatherBar is a lightweight, elegant macOS menu bar application that provides qu
 
 TranslateGPT is an iOS application that enables real-time, bidirectional language translation for natural conversations between speakers of different languages.
 
-> 🔒 Private repository (documentation available)
-
----
-
-### SweepMap
-
-No description available
-
-> 🔒 Private repository (no README available)
+> 🔒 Private repository
 
 ---
 
@@ -52,15 +66,13 @@ No description available
 
 This is a Swift port of the original "CustomMenus" Objective-C sample project from Apple.  It demonstrates a custom search completions popup window, and also demonstrates a popup menu with a custom view. 
 
-[View Repository](https://github.com/dougzilla32/CustomMenus)
-
 ---
 
 ### [Grab Attachments](./project-readmes/GrabAttachments.md)
 
 Bash script to automatically download attachments from gmail messages.  Uses curl, wget and mpack.
 
-> 🔒 Private repository (documentation available)
+> 🔒 Private repository
 
 ---
 
@@ -68,23 +80,11 @@ Bash script to automatically download attachments from gmail messages.  Uses cur
 
 This project contains experimental code demonstrating proposed 'cancellation' abilities for the upcoming async/await Swift language feature.
 
-[View Repository](https://github.com/dougzilla32/AsyncCancellation)
-
----
-
-### [Doug Stein's GitHub Projects](https://github.com/dougzilla32/dougzilla32)
-
-No description available
-
-[View Repository](https://github.com/dougzilla32/dougzilla32)
-
 ---
 
 ### [MazeMaker](https://github.com/dougzilla32/MazeMaker)
 
 A Swift program that generates random mazes using an elegant algorithm.
-
-[View Repository](https://github.com/dougzilla32/MazeMaker)
 
 ---
 
@@ -92,39 +92,13 @@ A Swift program that generates random mazes using an elegant algorithm.
 
 SearchBox is a subclass of NSSearchField that provides a completions drop-down menu with modernized interactions similar to the google search bar. 
 
-[View Repository](https://github.com/dougzilla32/SearchBox)
-
 ---
 
 ### CitiesAutocomplete
 
 Autocompletion server for cities worldwide
 
-> 🔒 Private repository (no README available)
-
----
-
-### SweepHash
-
-Hash code generator for Sweep N Park app
-
-> 🔒 Private repository (no README available)
-
----
-
-### [Weather Data](./project-readmes/NOAA-Weather-Bar.md)
-
-Temp and forecast in the Mac's menu bar
-
-> 🔒 Private repository (documentation available)
-
----
-
-### [SweepData](https://github.com/dougzilla32/SweepData)
-
-Route data for SweepNPark
-
-[View Repository](https://github.com/dougzilla32/SweepData)
+> 🔒 Private repository
 
 ---
 
@@ -132,31 +106,11 @@ Route data for SweepNPark
 
 Very fast CSV load and save using TabularData
 
-[View Repository](https://github.com/dougzilla32/TabularCSV)
-
----
-
-### [PromiseKit 6 Released](https://github.com/dougzilla32/PromiseKitCoreCancel)
-
-'Cancel' for PromiseKit -- mirror of old PromiseKit fork with CoreCancel branch
-
-[View Repository](https://github.com/dougzilla32/PromiseKitCoreCancel)
-
----
-
-### [QuizletSearch](https://github.com/dougzilla32/QuizletSearch)
-
-No description available
-
-[View Repository](https://github.com/dougzilla32/QuizletSearch)
-
 ---
 
 ### [CityParser](https://github.com/dougzilla32/CityParser)
 
 CityParser
-
-[View Repository](https://github.com/dougzilla32/CityParser)
 
 ---
 
@@ -164,15 +118,11 @@ CityParser
 
 Documentation!
 
-[View Repository](https://github.com/dougzilla32/dougzilla32.github.io)
-
 ---
 
-### [Getting Started](https://github.com/dougzilla32/ScrollingDateAndTimePicker)
+### [ScrollingDateAndTimePicker](https://github.com/dougzilla32/ScrollingDateAndTimePicker)
 
 Date and time picker control that scrolls horizontally
-
-[View Repository](https://github.com/dougzilla32/ScrollingDateAndTimePicker)
 
 ---
 
@@ -180,17 +130,39 @@ Date and time picker control that scrolls horizontally
 
 I am Doug's Clone! I'm excited to discuss my professional background and expertise, and I'm ready to answer any questions regarding my qualifications, including skills, experience, and certifications.
 
-[View Repository](https://github.com/dougzilla32/MyClone)
+---
+
+### [Specs](https://github.com/dougzilla32/Specs)
+
+The CocoaPods Master Repo
 
 ---
 
-### [SweepNPark-Issues](https://github.com/dougzilla32/SweepNPark-Issues)
+### [Swift Google Polylines ](https://github.com/dougzilla32/SwiftGooglePolyline)
 
-Issue tracking for the SweepNPark app
+Swift class extensions to encode/decode google coordinate polylines
 
-[View Repository](https://github.com/dougzilla32/SweepNPark-Issues)
+### [SwiftWhisper](https://github.com/dougzilla32/SwiftWhisper)
+
+🎤 The easiest way to transcribe audio in Swift
 
 ---
+
+### [articles](https://github.com/dougzilla32/articles)
+
+Articles for NSHipster.com
+
+---
+
+### [GitYourFeedback](https://github.com/dougzilla32/GitYourFeedback)
+
+Let users submit feedback, with screenshots, directly from your iOS app to Github Issues
+
+---
+
+### [Perfect-Markdown [简体中文](README.zh_CN.md)](https://github.com/dougzilla32/Perfect-Markdown)
+
+A solution to convert markdown text into html presentation in Swift, based on GerHobbelt's "upskirt" project.
 
 
 
