@@ -34,6 +34,8 @@ jobs:
           from github import Github
           import base64
           from datetime import datetime, timezone
+          import glob
+          import shutil
 
           # Initialize GitHub client
           token = os.environ['GITHUB_TOKEN']
@@ -79,12 +81,13 @@ jobs:
               
               return score
 
-          # Start building the main README content
-          main_readme = f"# Doug Stein's GitHub Projects\n\n"
-          main_readme += "Welcome to my GitHub profile! Below you'll find descriptions of my projects, including private repositories. "
-          main_readme += "For public repositories, links go directly to the GitHub repository. "
-          main_readme += "For private repositories, links go to documentation stored in this profile repository.\n\n"
-          main_readme += "## Projects\n\n"
+          # Create directory for individual READMEs if it doesn't exist
+          project_readmes_dir = 'profile-repo/project-readmes'
+          os.makedirs(project_readmes_dir, exist_ok=True)
+
+          # Track repositories to know which README files should be kept
+          all_repo_names = set()
+          private_repo_names = set()
 
           # Get all repositories and calculate significance
           repos_with_significance = []
@@ -92,11 +95,22 @@ jobs:
               # Skip forked repositories if desired
               if repo.fork:
                   continue
+              
+              all_repo_names.add(repo.name)
+              if repo.private:
+                  private_repo_names.add(repo.name)
                   
               # Calculate significance score
               significance = calculate_significance(repo)
               repos_with_significance.append((repo, significance))
               
+          # Start building the main README content
+          main_readme = f"# Doug Stein's GitHub Projects\n\n"
+          main_readme += "Welcome to my GitHub profile! Below you'll find descriptions of my projects, including private repositories. "
+          main_readme += "For public repositories, links go directly to the GitHub repository. "
+          main_readme += "For private repositories, links go to documentation stored in this profile repository.\n\n"
+          main_readme += "## Projects\n\n"
+          
           # Sort repositories by significance (highest first)
           repos_with_significance.sort(key=lambda x: x[1], reverse=True)
           
@@ -156,9 +170,6 @@ jobs:
                   
                   # Only copy READMEs for private repositories that have them
                   if repo.private and has_readme:
-                      # Create directory for individual READMEs if it doesn't exist
-                      os.makedirs('profile-repo/project-readmes', exist_ok=True)
-                      
                       # Modify the README content to include repository info at the top
                       repo_info = f"# {title}\n\n"
                       if description and description != 'No description available':
@@ -177,12 +188,24 @@ jobs:
                       else:
                           modified_readme = repo_info + readme_content
                       
-                      with open(f'profile-repo/project-readmes/{repo.name}.md', 'w') as f:
+                      with open(f'{project_readmes_dir}/{repo.name}.md', 'w') as f:
                           f.write(modified_readme)
                           
               except Exception as e:
                   print(f'Error processing {repo.name}: {str(e)}')
                   continue
+
+          # Cleanup: Remove README files for repositories that no longer exist or are public
+          # List all markdown files in the project_readmes directory
+          existing_readme_files = glob.glob(f'{project_readmes_dir}/*.md')
+          for readme_file in existing_readme_files:
+              # Extract the repository name from the filename
+              repo_name = os.path.basename(readme_file).replace('.md', '')
+              
+              # If the file is for a public repository or a repository that no longer exists, remove it
+              if repo_name not in private_repo_names:
+                  print(f"Removing README for public or removed repository: {repo_name}")
+                  os.remove(readme_file)
 
           # Add footer to main README
           main_readme += f"\n\n*Last updated: {datetime.now().strftime('%Y-%m-%d')}*\n"
@@ -196,6 +219,11 @@ jobs:
           print("\nRepository Significance Scores:")
           for repo, score in repos_with_significance:
               print(f"{repo.name}: {score}")
+              
+          print("\nCleanup Summary:")
+          print(f"Total repositories: {len(all_repo_names)}")
+          print(f"Private repositories: {len(private_repo_names)}")
+          print(f"Public repositories: {len(all_repo_names) - len(private_repo_names)}")
           EOF
           
           python update_readme.py
