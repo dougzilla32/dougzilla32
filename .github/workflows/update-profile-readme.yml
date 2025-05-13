@@ -33,47 +33,110 @@ jobs:
           import re
           from github import Github
           import base64
-          from datetime import datetime
+          from datetime import datetime, timezone
 
           # Initialize GitHub client
           token = os.environ['GITHUB_TOKEN']
           g = Github(token)
           user = g.get_user()
 
+          def calculate_significance(repo):
+              # Base score
+              score = 0
+              
+              # Stars have high weight
+              score += repo.stargazers_count * 10
+              
+              # Forks have medium weight
+              score += repo.forks_count * 5
+              
+              # Recent activity (higher for newer repos)
+              if repo.updated_at:
+                  # Calculate days since last update
+                  days_since_update = (datetime.now(timezone.utc) - 
+                                      repo.updated_at).days
+                  # More recent updates get higher scores (max 100)
+                  score += max(0, 100 - days_since_update)
+              
+              # Size has some weight
+              score += min(100, repo.size / 1000)  # Cap at 100 points for size
+              
+              # Custom tag in topics can override
+              if 'significance:high' in repo.get_topics():
+                  score += 1000
+              elif 'significance:medium' in repo.get_topics():
+                  score += 500
+              elif 'significance:low' in repo.get_topics():
+                  score -= 500
+              
+              # Non-forked repos get a boost
+              if not repo.fork:
+                  score += 100
+                  
+              # Private repos might be more significant for professional work
+              if repo.private:
+                  score += 50
+              
+              return score
+
           # Start building the main README content
           main_readme = f"# Doug Stein's GitHub Projects\n\n"
           main_readme += "Welcome to my GitHub profile! Below you'll find descriptions of my projects, including private repositories. "
-          main_readme += "Click on the project names to see detailed documentation.\n\n"
+          main_readme += "For public repositories, links go directly to the GitHub repository. "
+          main_readme += "For private repositories, links go to documentation stored in this profile repository.\n\n"
           main_readme += "## Projects\n\n"
 
-          # Process each repository
+          # Get all repositories and calculate significance
+          repos_with_significance = []
           for repo in user.get_repos():
               # Skip forked repositories if desired
               if repo.fork:
                   continue
                   
+              # Calculate significance score
+              significance = calculate_significance(repo)
+              repos_with_significance.append((repo, significance))
+              
+          # Sort repositories by significance (highest first)
+          repos_with_significance.sort(key=lambda x: x[1], reverse=True)
+          
+          # Process each repository in order of significance
+          for repo, significance in repos_with_significance:
               try:
                   # Get the repository description from the About section
                   description = repo.description or 'No description available'
                   
-                  # Try to get the repository README content
-                  try:
-                      readme_file = repo.get_readme()
-                      readme_content = base64.b64decode(readme_file.content).decode('utf-8')
-                      
-                      # Extract first heading for title, if available
-                      title_match = re.search(r'# (.+?)\n', readme_content)
-                      title = title_match.group(1) if title_match else repo.name
-                  except:
-                      # If no README or can't be decoded, just use the repo name
-                      readme_content = f"# {repo.name}\n\nNo README available for this repository."
-                      title = repo.name
-                  
                   # Get repository topics/tags
                   topics = repo.get_topics()
                   
+                  # Try to get the repository README content for the title
+                  has_readme = False
+                  title = repo.name
+                  try:
+                      readme_file = repo.get_readme()
+                      readme_content = base64.b64decode(readme_file.content).decode('utf-8')
+                      has_readme = True
+                      
+                      # Extract first heading for title, if available
+                      title_match = re.search(r'# (.+?)\n', readme_content)
+                      if title_match:
+                          title = title_match.group(1)
+                  except:
+                      # No README available
+                      readme_content = f"# {repo.name}\n\nNo README available for this repository."
+                  
                   # Add to main README
-                  main_readme += f"### [{title}](./project-readmes/{repo.name}.md)\n\n"
+                  if repo.private:
+                      if has_readme:
+                          # For private repos with README, link to local copy
+                          main_readme += f"### [{title}](./project-readmes/{repo.name}.md)\n\n"
+                      else:
+                          # For private repos without README, just show the name without link
+                          main_readme += f"### {title}\n\n"
+                  else:
+                      # For public repos, link directly to GitHub
+                      main_readme += f"### [{title}]({repo.html_url})\n\n"
+                  
                   main_readme += f"{description}\n\n"
                   
                   if topics:
@@ -81,40 +144,42 @@ jobs:
                       
                   # Note if it's private
                   if repo.private:
-                      main_readme += "> 🔒 Private repository\n\n"
+                      if has_readme:
+                          main_readme += "> 🔒 Private repository (documentation available)\n\n"
+                      else:
+                          main_readme += "> 🔒 Private repository (no README available)\n\n"
                   else:
                       main_readme += f"[View Repository]({repo.html_url})\n\n"
                       
                   # Add a divider
                   main_readme += "---\n\n"
                   
-                  # Create directory for individual READMEs if it doesn't exist
-                  os.makedirs('profile-repo/project-readmes', exist_ok=True)
-                  
-                  # Modify the README content to include repository info at the top
-                  repo_info = f"# {title}\n\n"
-                  if description and description != 'No description available':
-                      repo_info += f"{description}\n\n"
-                  
-                  if repo.private:
+                  # Only copy READMEs for private repositories that have them
+                  if repo.private and has_readme:
+                      # Create directory for individual READMEs if it doesn't exist
+                      os.makedirs('profile-repo/project-readmes', exist_ok=True)
+                      
+                      # Modify the README content to include repository info at the top
+                      repo_info = f"# {title}\n\n"
+                      if description and description != 'No description available':
+                          repo_info += f"{description}\n\n"
+                      
                       repo_info += "> 🔒 Private Repository\n\n"
-                  else:
-                      repo_info += f"> [View Repository]({repo.html_url})\n\n"
-                  
-                  if topics:
-                      repo_info += 'Technologies: ' + ', '.join(f'`{topic}`' for topic in topics) + '\n\n'
                       
-                  repo_info += "---\n\n"
-                  
-                  # Save the individual README file, replacing the original title to avoid duplication
-                  if title_match:
-                      modified_readme = readme_content.replace(title_match.group(0), repo_info, 1)
-                  else:
-                      modified_readme = repo_info + readme_content
-                  
-                  with open(f'profile-repo/project-readmes/{repo.name}.md', 'w') as f:
-                      f.write(modified_readme)
+                      if topics:
+                          repo_info += 'Technologies: ' + ', '.join(f'`{topic}`' for topic in topics) + '\n\n'
+                          
+                      repo_info += "---\n\n"
                       
+                      # Save the individual README file, replacing the original title to avoid duplication
+                      if title_match:
+                          modified_readme = readme_content.replace(title_match.group(0), repo_info, 1)
+                      else:
+                          modified_readme = repo_info + readme_content
+                      
+                      with open(f'profile-repo/project-readmes/{repo.name}.md', 'w') as f:
+                          f.write(modified_readme)
+                          
               except Exception as e:
                   print(f'Error processing {repo.name}: {str(e)}')
                   continue
@@ -126,6 +191,11 @@ jobs:
           # Write the main README file
           with open('profile-repo/README.md', 'w') as f:
               f.write(main_readme)
+              
+          # Print some info about the significance scores for debugging
+          print("\nRepository Significance Scores:")
+          for repo, score in repos_with_significance:
+              print(f"{repo.name}: {score}")
           EOF
           
           python update_readme.py
