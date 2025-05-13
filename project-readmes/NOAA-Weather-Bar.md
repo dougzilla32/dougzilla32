@@ -1,6 +1,4 @@
-NOAA Weather Bar is a HIGH QUALITY FREE app to display current weather conditions in your Mac’s menu bar, with a drop-down for the forecast.  The current temperature, conditions and forecast are updated every 5 minutes.  Clicking on menu bar drops down current forecast information along with a search box to access new locations and favorites.
-
-#### Weather Data
+# NOAA-Weather-Bar
 
 Temp and forecast in the Mac's menu bar
 
@@ -8,6 +6,9 @@ Temp and forecast in the Mac's menu bar
 
 ---
 
+NOAA Weather Bar is a HIGH QUALITY FREE app to display current weather conditions in your Mac’s menu bar, with a drop-down for the forecast.  The current temperature, conditions and forecast are updated every 5 minutes.  Clicking on menu bar drops down current forecast information along with a search box to access new locations and favorites.
+
+#### Weather Data
 Current conditions and forecast information are pulled from NOAA’s National Weather Service for U.S. and from Open Weather Map for international.  Due to limitations on these free weather APIs, the forecast for U.S. locations and Puerto Rico is 7 days but for international is limited to 3 days.  Accuracy of conditions and forecasts are linked to these services.
 
 #### Features

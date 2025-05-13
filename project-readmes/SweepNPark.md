@@ -1,4 +1,4 @@
-## Sweep N' Park San Francisco
+# SweepNPark
 
 Sweep N' Park is a navigation app that helps users find parking in San Francisco by visualizing street sweep and tow-away restrictions on a map.
 
@@ -8,6 +8,7 @@ Technologies: `parking`
 
 ---
 
+## Sweep N' Park San Francisco
 
 ### Overview
 
