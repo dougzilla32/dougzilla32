@@ -16,7 +16,7 @@ Technologies: `swift`, `objc`, `promises`
 
 ---
 
-### [WeatherBar: A macOS Weather App with Elegant UI](./project-readmes/WeatherBar.md)
+### [WeatherBar: A macOS Weather App with Elegant UI](./project-readmes/WeatherBar/WeatherBar.md)
 
 WeatherBar is a lightweight, elegant macOS menu bar application that provides quick access to weather information directly from your desktop.
 
@@ -30,7 +30,7 @@ Temp and forecast in the Mac's menu bar
 
 ---
 
-### [SweepNPark](./project-readmes/SweepNPark.md)
+### [SweepNPark](./project-readmes/SweepNPark/SweepNPark.md)
 
 Sweep N' Park is a navigation app that helps users find parking in San Francisco by visualizing street sweep and tow-away restrictions on a map.
 
