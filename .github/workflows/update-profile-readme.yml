@@ -155,7 +155,6 @@ jobs:
               try:
                   # Properly decode the file path (replace %20 with spaces, etc.)
                   decoded_path = unquote(file_path)
-                  print(f"Attempting to download: {decoded_path}")
                   
                   # Get file metadata to retrieve the SHA
                   file_info = repo.get_contents(decoded_path)
@@ -174,7 +173,7 @@ jobs:
                   with open(save_path, "wb") as f:
                       f.write(binary_data)
                       
-                  print(f"Successfully downloaded {decoded_path} to {save_path}")
+                  print(f"Downloaded {decoded_path} to {save_path}")
                   return True
                   
               except Exception as e:
@@ -379,7 +378,6 @@ jobs:
                                       img_filename = os.path.basename(img_path_clean)
                                       
                                       # Download the image file
-                                      print(f"Downloading image {img_path_clean} from {repo.name}")
                                       success = download_file_from_repo(
                                           repo, 
                                           img_path_clean, 
