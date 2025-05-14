@@ -148,17 +148,32 @@ jobs:
 
           def download_file_from_repo(repo, file_path, save_path):
               """Download a file from the repository and save it locally"""
-              # For image files, use the raw URL directly
-              if file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.svg')):
+              import urllib.parse
+              from urllib.parse import quote
+              import requests
+              import os
+              import base64
+              
+              # Properly decode the file path (replace %20 with spaces, etc.)
+              try:
+                  decoded_path = urllib.parse.unquote(file_path)
+              except Exception as e:
+                  print(f"Warning: Could not decode path {file_path}: {str(e)}")
+                  decoded_path = file_path
+              
+              # Get just the filename without any directories
+              filename = os.path.basename(decoded_path)
+              
+              # For image files, try the raw URL approach first
+              if decoded_path.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.svg')):
                   try:
-                      import requests
-                      from urllib.parse import quote
-                      
                       # Escape the file path for URL
-                      escaped_path = quote(file_path)
+                      escaped_path = quote(decoded_path)
                       raw_url = f"https://raw.githubusercontent.com/{repo.owner.login}/{repo.name}/{repo.default_branch}/{escaped_path}"
                       
+                      print(f"Trying raw URL: {raw_url}")
                       response = requests.get(raw_url)
+                      
                       if response.status_code == 200:
                           # Create directory if it doesn't exist
                           os.makedirs(os.path.dirname(save_path), exist_ok=True)
@@ -167,37 +182,75 @@ jobs:
                               f.write(response.content)
                           return True
                       else:
-                          print(f"Failed to download {file_path}: HTTP {response.status_code}")
-                          return False
+                          print(f"Raw URL failed for {decoded_path}: HTTP {response.status_code}")
+                          # Continue to API approach below if raw URL fails
                   except Exception as e:
-                      print(f"Error downloading {file_path}: {str(e)}")
-                      return False
-              else:
+                      print(f"Error with raw URL for {decoded_path}: {str(e)}")
+                      # Continue to API approach below
+              
+              # Try the GitHub API approach with get_contents
+              try:
+                  # Try with the decoded path
                   try:
-                      # URL-decode the file path (replace %20 with spaces, etc.)
-                      decoded_path = file_path
-                      try:
-                          import urllib.parse
-                          decoded_path = urllib.parse.unquote(file_path)
-                      except Exception as e:
-                          print(f"Warning: Could not decode path {file_path}: {str(e)}")
+                      print(f"Trying API with decoded path: {decoded_path}")
+                      file_content = repo.get_contents(decoded_path)
                       
-                      # Only use the decoded path, don't try both
-                      try:
-                          file_content = repo.get_contents(decoded_path)
-                          # Create directory if it doesn't exist
-                          os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                          
-                          # For binary files (like images)
-                          with open(save_path, 'wb') as f:
-                              f.write(base64.b64decode(file_content.content))
-                          return True
-                      except Exception as e:
-                          print(f"Failed to download {decoded_path} from {repo.name}: {str(e)}")
-                          return False
+                      # Create directory if it doesn't exist
+                      os.makedirs(os.path.dirname(save_path), exist_ok=True)
+                      
+                      # For binary files (like images)
+                      with open(save_path, 'wb') as f:
+                          f.write(base64.b64decode(file_content.content))
+                      return True
                   except Exception as e:
-                      print(f"Error in download_file_from_repo for {file_path}: {str(e)}")
-                      return False
+                      print(f"API with decoded path failed: {str(e)}")
+                      
+                      # If the path has spaces, try an alternative path format
+                      if ' ' in decoded_path:
+                          # Replace spaces with %20 for GitHub's API
+                          alt_path = decoded_path.replace(' ', '%20')
+                          try:
+                              print(f"Trying API with URL-encoded spaces: {alt_path}")
+                              file_content = repo.get_contents(alt_path)
+                              
+                              # Create directory if it doesn't exist
+                              os.makedirs(os.path.dirname(save_path), exist_ok=True)
+                              
+                              with open(save_path, 'wb') as f:
+                                  f.write(base64.b64decode(file_content.content))
+                              return True
+                          except Exception as e:
+                              print(f"API with URL-encoded spaces failed: {str(e)}")
+                      
+                      # Final fallback: search in the repository to find a file with matching name
+                      try:
+                          print(f"Searching repository for file with name: {filename}")
+                          all_files = repo.get_git_trees(repo.default_branch, recursive=True).tree
+                          
+                          # Look for a file with a matching name anywhere in the repo
+                          for item in all_files:
+                              if item.type == "blob" and os.path.basename(item.path) == filename:
+                                  try:
+                                      print(f"Found file with matching name at path: {item.path}")
+                                      file_content = repo.get_contents(item.path)
+                                      
+                                      # Create directory if it doesn't exist
+                                      os.makedirs(os.path.dirname(save_path), exist_ok=True)
+                                      
+                                      with open(save_path, 'wb') as f:
+                                          f.write(base64.b64decode(file_content.content))
+                                      return True
+                                  except Exception as e:
+                                      print(f"Failed to download found file: {str(e)}")
+                          
+                          print(f"No file with name '{filename}' found in repository")
+                          return False
+                      except Exception as e:
+                          print(f"Failed to search repository: {str(e)}")
+                          return False
+              except Exception as e:
+                  print(f"Error in download_file_from_repo for {decoded_path}: {str(e)}")
+                  return False
 
           def update_image_references(markdown_content, repo_name, has_subdirectory):
               """Update image references in markdown to point to the new location"""
