@@ -125,6 +125,86 @@ jobs:
                   
               return False
 
+          def extract_image_references(markdown_content):
+              """Extract image references from markdown content"""
+              # Regular expression for Markdown image syntax: ![alt text](path/to/image.png)
+              image_pattern = r'!\[.*?\]\((.*?)\)'
+              # Regular expression for HTML image tags: <img src="path/to/image.png" ... />
+              html_img_pattern = r'<img.*?src=[\'"]([^\'"]*)[\'"].*?/?>'
+              
+              # Find all matches for both patterns
+              markdown_images = re.findall(image_pattern, markdown_content)
+              html_images = re.findall(html_img_pattern, markdown_content)
+              
+              # Combine both lists
+              all_images = markdown_images + html_images
+              
+              # Filter out URLs (we only want local files)
+              local_images = [img for img in all_images 
+                             if not img.startswith('http://') 
+                             and not img.startswith('https://')]
+              
+              return local_images
+
+          def download_file_from_repo(repo, file_path, save_path):
+              """Download a file from the repository and save it locally"""
+              try:
+                  file_content = repo.get_contents(file_path)
+                  # Create directory if it doesn't exist
+                  os.makedirs(os.path.dirname(save_path), exist_ok=True)
+                  
+                  # For binary files (like images)
+                  with open(save_path, 'wb') as f:
+                      f.write(base64.b64decode(file_content.content))
+                  return True
+              except Exception as e:
+                  print(f"Failed to download {file_path} from {repo.name}: {str(e)}")
+                  return False
+
+          def update_image_references(markdown_content, repo_name, has_subdirectory):
+              """Update image references in markdown to point to the new location"""
+              
+              # Function to replace each image reference
+              def replace_image_ref(match, pattern, group_index):
+                  full_match = match.group(0)
+                  image_path = match.group(group_index)
+                  
+                  # Skip URLs
+                  if image_path.startswith('http://') or image_path.startswith('https://'):
+                      return full_match
+                      
+                  # Get just the image filename (without any directories)
+                  image_filename = os.path.basename(image_path)
+                  
+                  # Determine the new path based on whether we're using subdirectories
+                  if has_subdirectory:
+                      # Images are in the same directory as the README
+                      new_path = image_filename
+                  else:
+                      # Images are in a subdirectory named after the repo
+                      new_path = f"{repo_name}/{image_filename}"
+                      
+                  # Replace the old path with the new path
+                  return full_match.replace(image_path, new_path)
+              
+              # Update Markdown image syntax: ![alt text](path/to/image.png)
+              content = markdown_content
+              content = re.sub(
+                  r'!\[(.*?)\]\((.*?)\)', 
+                  lambda match: replace_image_ref(match, r'!\[(.*?)\]\((.*?)\)', 2), 
+                  content
+              )
+              
+              # Update HTML image tags: <img src="path/to/image.png" ... />
+              content = re.sub(
+                  r'<img(.*?)src=[\'"]([^\'"]*)[\'"]([^>]*?)/?>', 
+                  lambda match: match.group(0).replace(match.group(2), 
+                      os.path.basename(match.group(2)) if has_subdirectory else f"{repo_name}/{os.path.basename(match.group(2))}"), 
+                  content
+              )
+              
+              return content
+
           # Create directory for individual READMEs if it doesn't exist
           project_readmes_dir = 'profile-repo/project-readmes'
           os.makedirs(project_readmes_dir, exist_ok=True)
@@ -169,7 +249,7 @@ jobs:
           repos_by_base_name = defaultdict(list)
           for repo, significance, base_name, readme_content in repos_with_data:
               repos_by_base_name[base_name].append((repo, significance, readme_content))
-          
+
           # Sort base name groups by their highest significance score
           base_names_by_significance = []
           for base_name, repos in repos_by_base_name.items():
@@ -223,8 +303,17 @@ jobs:
                       
                       # Add to main README
                       if repo.private:
-                          # For private repos, link to local copy
-                          main_readme += f"### [{title}](./project-readmes/{repo.name}.md)\n\n"
+                          # Check for image dependencies in the README
+                          image_refs = extract_image_references(readme_content)
+                          has_images = len(image_refs) > 0
+                          
+                          # Determine whether to use subdirectory approach
+                          if has_images:
+                              # For READMEs with images, link to the README in the subdirectory
+                              main_readme += f"### [{title}](./project-readmes/{repo.name}/{repo.name}.md)\n\n"
+                          else:
+                              # For READMEs without images, keep the original structure
+                              main_readme += f"### [{title}](./project-readmes/{repo.name}.md)\n\n"
                       else:
                           # For public repos, link directly to GitHub
                           main_readme += f"### [{title}]({repo.html_url})\n\n"
@@ -240,7 +329,11 @@ jobs:
                       
                       # Only copy READMEs for private repositories
                       if repo.private:
-                          # Modify the README content to include repository info at the top
+                          # Check for image dependencies in the README
+                          image_refs = extract_image_references(readme_content)
+                          has_images = len(image_refs) > 0
+                          
+                          # Prepare repository info header
                           repo_info = f"# {title}\n\n"
                           repo_info += f"{description}\n\n"
                           repo_info += "> 🔒 Private Repository\n\n"
@@ -250,21 +343,82 @@ jobs:
                               
                           repo_info += "---\n\n"
                           
-                          # Check if the first real line is a title
-                          if readme_content_stripped.startswith('# '):
-                              first_line_end = readme_content_stripped.find('\n')
-                              # Replace just the first title line
-                              if first_line_end > 0:
-                                  first_title_line = readme_content_stripped[:first_line_end+1]
-                                  modified_readme = readme_content.replace(first_title_line, repo_info, 1)
+                          # Determine where to save the README and how to modify image paths
+                          if has_images:
+                              # Create a subdirectory for this repository
+                              repo_subdir = f'{project_readmes_dir}/{repo.name}'
+                              os.makedirs(repo_subdir, exist_ok=True)
+                              
+                              # Download all referenced images
+                              for img_path in image_refs:
+                                  try:
+                                      # Handle relative paths by removing leading ./ or ../
+                                      img_path_clean = re.sub(r'^\.\.?/', '', img_path)
+                                      
+                                      # Get just the filename without any directories
+                                      img_filename = os.path.basename(img_path_clean)
+                                      
+                                      # Download the image file
+                                      print(f"Downloading image {img_path_clean} from {repo.name}")
+                                      success = download_file_from_repo(
+                                          repo, 
+                                          img_path_clean, 
+                                          f'{repo_subdir}/{img_filename}'
+                                      )
+                                      
+                                      if not success:
+                                          print(f"Failed to download {img_path_clean} - trying alternate paths")
+                                          # Try common alternative paths
+                                          for alt_dir in ['assets', 'images', 'img', 'resources', 'docs']:
+                                              alt_path = f"{alt_dir}/{img_filename}"
+                                              print(f"Trying {alt_path}")
+                                              if download_file_from_repo(
+                                                  repo, 
+                                                  alt_path, 
+                                                  f'{repo_subdir}/{img_filename}'
+                                              ):
+                                                  print(f"Successfully downloaded from {alt_path}")
+                                                  break
+                                  except Exception as e:
+                                      print(f"Error downloading image {img_path} from {repo.name}: {str(e)}")
+                              
+                              # Update image references in the README
+                              modified_readme = update_image_references(readme_content, repo.name, True)
+                              
+                              # Check if the first real line is a title
+                              if modified_readme.lstrip().startswith('# '):
+                                  first_line_end = modified_readme.lstrip().find('\n')
+                                  # Replace just the first title line
+                                  if first_line_end > 0:
+                                      first_title_line = modified_readme.lstrip()[:first_line_end+1]
+                                      modified_readme = modified_readme.replace(first_title_line, repo_info, 1)
+                                  else:
+                                      modified_readme = repo_info + modified_readme.lstrip()[2:]  # Skip the #
                               else:
-                                  modified_readme = repo_info + readme_content[2:]  # Skip the # 
+                                  # No title at the start, just prepend our info
+                                  modified_readme = repo_info + modified_readme
+                              
+                              # Save the modified README in the subdirectory
+                              with open(f'{repo_subdir}/{repo.name}.md', 'w') as f:
+                                  f.write(modified_readme)
                           else:
-                              # No title at the start, just prepend our info
-                              modified_readme = repo_info + readme_content
-                          
-                          with open(f'{project_readmes_dir}/{repo.name}.md', 'w') as f:
-                              f.write(modified_readme)
+                              # No images - use the original flat structure
+                              # Check if the first real line is a title
+                              if readme_content_stripped.startswith('# '):
+                                  first_line_end = readme_content_stripped.find('\n')
+                                  # Replace just the first title line
+                                  if first_line_end > 0:
+                                      first_title_line = readme_content_stripped[:first_line_end+1]
+                                      modified_readme = readme_content.replace(first_title_line, repo_info, 1)
+                                  else:
+                                      modified_readme = repo_info + readme_content[2:]  # Skip the # 
+                              else:
+                                  # No title at the start, just prepend our info
+                                  modified_readme = repo_info + readme_content
+                              
+                              # Save the README directly in the project_readmes directory
+                              with open(f'{project_readmes_dir}/{repo.name}.md', 'w') as f:
+                                  f.write(modified_readme)
                               
                   except Exception as e:
                       print(f"Error processing {repo.name}: {str(e)}")
@@ -274,7 +428,7 @@ jobs:
               if base_name != base_names_by_significance[-1][0]:
                   main_readme += "---\n\n"
 
-          # Cleanup: Remove README files for repositories that no longer exist or are public
+          # Cleanup: Remove README files and directories for repositories that no longer exist or are public
           # List all markdown files in the project_readmes directory
           existing_readme_files = glob.glob(f'{project_readmes_dir}/*.md')
           for readme_file in existing_readme_files:
@@ -285,6 +439,16 @@ jobs:
               if repo_name not in private_repo_names:
                   print(f"Removing README for public or removed repository: {repo_name}")
                   os.remove(readme_file)
+
+          # Also check for subdirectories that need to be removed
+          subdirs = [d for d in os.listdir(project_readmes_dir) 
+                    if os.path.isdir(os.path.join(project_readmes_dir, d))]
+
+          for subdir in subdirs:
+              if subdir not in private_repo_names:
+                  import shutil
+                  print(f"Removing subdirectory for public or removed repository: {subdir}")
+                  shutil.rmtree(os.path.join(project_readmes_dir, subdir))
 
           # Add footer to main README
           main_readme += f"\n\n*Last updated: {datetime.now().strftime('%Y-%m-%d')}*\n"
