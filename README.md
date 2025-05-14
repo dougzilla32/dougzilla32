@@ -10,7 +10,7 @@ Promises for Swift & ObjC.
 
 Technologies: `swift`, `objc`, `promises`
 
-### [PromiseKit 6 Released](https://github.com/dougzilla32/PromiseKitCoreCancel)
+### [PromiseKitCoreCancel](https://github.com/dougzilla32/PromiseKitCoreCancel)
 
 'Cancel' for PromiseKit -- mirror of old PromiseKit fork with CoreCancel branch
 
@@ -58,7 +58,7 @@ This is a Swift port of the original "CustomMenus" Objective-C sample project fr
 
 ---
 
-### [Grab Attachments](./project-readmes/GrabAttachments.md)
+### [GrabAttachments](./project-readmes/GrabAttachments.md)
 
 Bash script to automatically download attachments from gmail messages.  Uses curl, wget and mpack.
 
@@ -96,7 +96,7 @@ I am Doug's Clone! I'm excited to discuss my professional background and experti
 
 
 
-*Last updated: 2025-05-13*
+*Last updated: 2025-05-14*
 
 
 This profile is automatically generated from my repository information

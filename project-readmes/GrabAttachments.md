@@ -1,8 +1,4 @@
-![badge-platforms](https://img.shields.io/badge/platforms-osx,%20gmail-blue.svg)
-![badge-languages](https://img.shields.io/badge/languages-bash-orange.svg)
-![badge-requirements](https://img.shields.io/badge/requirements-Homebrew,%20curl,%20wget%20%26%20mpack-green.svg)
-
-# Grab Attachments
+# GrabAttachments
 
 Bash script to automatically download attachments from gmail messages.  Uses curl, wget and mpack.
 
@@ -10,6 +6,11 @@ Bash script to automatically download attachments from gmail messages.  Uses cur
 
 ---
 
+![badge-platforms](https://img.shields.io/badge/platforms-osx,%20gmail-blue.svg)
+![badge-languages](https://img.shields.io/badge/languages-bash-orange.svg)
+![badge-requirements](https://img.shields.io/badge/requirements-Homebrew,%20curl,%20wget%20%26%20mpack-green.svg)
+
+# Grab Attachments
 
 This script searches for messages in your gmail "Inbox" folder.  For each matching message, it
 downloads it's attachments (if any).  After downloading the attachments for all matching
