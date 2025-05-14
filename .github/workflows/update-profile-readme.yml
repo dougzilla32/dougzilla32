@@ -169,10 +169,10 @@ jobs:
                   try:
                       # Escape the file path for URL
                       escaped_path = quote(decoded_path)
-                      raw_url = f"https://raw.githubusercontent.com/{repo.owner.login}/{repo.name}/{repo.default_branch}/{escaped_path}"
+                      blob_url = f"https://github.com/{repo.owner.login}/{repo.name}/blob/main/{repo.default_branch}/{escaped_path}"
                       
-                      print(f"Trying raw URL: {raw_url}")
-                      response = requests.get(raw_url)
+                      print(f"Trying blob URL: {blob_url}")
+                      response = requests.get(blob_url)
                       
                       if response.status_code == 200:
                           # Create directory if it doesn't exist
@@ -182,10 +182,10 @@ jobs:
                               f.write(response.content)
                           return True
                       else:
-                          print(f"Raw URL failed for {decoded_path}: HTTP {response.status_code}")
-                          # Continue to API approach below if raw URL fails
+                          print(f"Blob URL failed for {decoded_path}: HTTP {response.status_code}")
+                          # Continue to API approach below if blob URL fails
                   except Exception as e:
-                      print(f"Error with raw URL for {decoded_path}: {str(e)}")
+                      print(f"Error with blob URL for {decoded_path}: {str(e)}")
                       # Continue to API approach below
               
               # Try the GitHub API approach with get_contents
