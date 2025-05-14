@@ -387,83 +387,11 @@ jobs:
                                           f'{repo_subdir}/{img_filename}'
                                       )
                                       
+                                      # If all attempts failed, create a placeholder file with a note
                                       if not success:
-                                          print(f"Failed to download {img_path_clean} - trying alternate paths")
-                                          
-                                          # Try getting contents of the repository to find the image
-                                          try:
-                                              # Check for Media directory specifically (common in your logs)
-                                              if "Media" in img_path_clean:
-                                                  # Try to find the image by traversing the repository structure
-                                                  path_parts = img_path_clean.split('/')
-                                                  
-                                                  # Find Media directory contents recursively
-                                                  def find_file_in_repo(repo, target_filename, current_path=""):
-                                                      try:
-                                                          contents = repo.get_contents(current_path)
-                                                          
-                                                          # Handle single file case
-                                                          if not isinstance(contents, list):
-                                                              contents = [contents]
-                                                              
-                                                          for item in contents:
-                                                              if item.type == "dir":
-                                                                  # Recursively search subdirectories
-                                                                  result = find_file_in_repo(repo, target_filename, item.path)
-                                                                  if result:
-                                                                      return result
-                                                              elif item.type == "file" and item.name == target_filename:
-                                                                  # Found the file!
-                                                                  return item.path
-                                                          return None
-                                                      except Exception as e:
-                                                          print(f"Error searching {current_path}: {str(e)}")
-                                                          return None
-                                                  
-                                                  # Try to find the image file by name in the repository
-                                                  file_path = find_file_in_repo(repo, img_filename)
-                                                  if file_path:
-                                                      print(f"Found image at {file_path}")
-                                                      # Try to download the file from the found path
-                                                      if download_file_from_repo(
-                                                          repo, 
-                                                          file_path, 
-                                                          f'{repo_subdir}/{img_filename}'
-                                                      ):
-                                                          print(f"Successfully downloaded from {file_path}")
-                                                          success = True
-                                          except Exception as e:
-                                              print(f"Error searching repository: {str(e)}")
-                                          
-                                          # If still not successful, try common directories
-                                          if not success:
-                                              for alt_dir in ['assets', 'images', 'img', 'resources', 'Resources', 'docs', 'Media']:
-                                                  alt_path = f"{alt_dir}/{img_filename}"
-                                                  print(f"Trying {alt_path}")
-                                                  if download_file_from_repo(
-                                                      repo, 
-                                                      alt_path, 
-                                                      f'{repo_subdir}/{img_filename}'
-                                                  ):
-                                                      print(f"Successfully downloaded from {alt_path}")
-                                                      success = True
-                                                      break
-                                          
-                                          # If still can't find the image, try searching for it by name without directory
-                                          if not success:
-                                              if download_file_from_repo(
-                                                  repo, 
-                                                  img_filename, 
-                                                  f'{repo_subdir}/{img_filename}'
-                                              ):
-                                                  print(f"Successfully downloaded {img_filename} from root")
-                                                  success = True
-                                          
-                                          # If all attempts failed, create a placeholder file with a note
-                                          if not success:
-                                              print(f"Creating placeholder for {img_filename}")
-                                              with open(f'{repo_subdir}/{img_filename}', 'w') as placeholder:
-                                                  placeholder.write(f"Image {img_filename} could not be found in the repository.")
+                                          print(f"Creating placeholder for {img_filename}")
+                                          with open(f'{repo_subdir}/{img_filename}', 'w') as placeholder:
+                                              placeholder.write(f"Image {img_filename} could not be found in the repository.")
                                   except Exception as e:
                                       print(f"Error processing image {img_path} from {repo.name}: {str(e)}")
                               
