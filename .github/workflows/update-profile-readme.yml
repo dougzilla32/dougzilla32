@@ -148,25 +148,43 @@ jobs:
 
           def download_file_from_repo(repo, file_path, save_path):
               """Download a file from the repository and save it locally"""
-              try:
-                  # URL-decode the file path (replace %20 with spaces, etc.)
-                  decoded_path = file_path
+              # For image files, use the raw URL directly
+              if file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.svg')):
                   try:
-                      import urllib.parse
-                      decoded_path = urllib.parse.unquote(file_path)
+                      import requests
+                      from urllib.parse import quote
+                      
+                      # Escape the file path for URL
+                      escaped_path = quote(file_path)
+                      raw_url = f"https://raw.githubusercontent.com/{repo.owner.login}/{repo.name}/{repo.default_branch}/{escaped_path}"
+                      
+                      response = requests.get(raw_url)
+                      if response.status_code == 200:
+                          # Create directory if it doesn't exist
+                          os.makedirs(os.path.dirname(save_path), exist_ok=True)
+                          
+                          with open(save_path, 'wb') as f:
+                              f.write(response.content)
+                          return True
+                      else:
+                          print(f"Failed to download {file_path}: HTTP {response.status_code}")
+                          return False
                   except Exception as e:
-                      print(f"Warning: Could not decode path {file_path}: {str(e)}")
-                  
-                  # Try both the original path and the decoded path
-                  paths_to_try = [file_path, decoded_path]
-                  
-                  # If they're the same, don't try twice
-                  if file_path == decoded_path:
-                      paths_to_try = [file_path]
-                  
-                  for path in paths_to_try:
+                      print(f"Error downloading {file_path}: {str(e)}")
+                      return False
+              else:
+                  try:
+                      # URL-decode the file path (replace %20 with spaces, etc.)
+                      decoded_path = file_path
                       try:
-                          file_content = repo.get_contents(path)
+                          import urllib.parse
+                          decoded_path = urllib.parse.unquote(file_path)
+                      except Exception as e:
+                          print(f"Warning: Could not decode path {file_path}: {str(e)}")
+                      
+                      # Only use the decoded path, don't try both
+                      try:
+                          file_content = repo.get_contents(decoded_path)
                           # Create directory if it doesn't exist
                           os.makedirs(os.path.dirname(save_path), exist_ok=True)
                           
@@ -175,12 +193,11 @@ jobs:
                               f.write(base64.b64decode(file_content.content))
                           return True
                       except Exception as e:
-                          if path == paths_to_try[-1]:  # Only print error on last attempt
-                              print(f"Failed to download {path} from {repo.name}: {str(e)}")
-                  return False
-              except Exception as e:
-                  print(f"Error in download_file_from_repo for {file_path}: {str(e)}")
-                  return False
+                          print(f"Failed to download {decoded_path} from {repo.name}: {str(e)}")
+                          return False
+                  except Exception as e:
+                      print(f"Error in download_file_from_repo for {file_path}: {str(e)}")
+                      return False
 
           def update_image_references(markdown_content, repo_name, has_subdirectory):
               """Update image references in markdown to point to the new location"""
