@@ -169,7 +169,7 @@ jobs:
                   try:
                       # Escape the file path for URL
                       escaped_path = quote(decoded_path)
-                      blob_url = f"https://github.com/{repo.owner.login}/{repo.name}/blob/main/{repo.default_branch}/{escaped_path}"
+                      blob_url = f"https://github.com/{repo.owner.login}/{repo.name}/blob/{repo.default_branch}/{escaped_path}"
                       
                       print(f"Trying blob URL: {blob_url}")
                       response = requests.get(blob_url)
