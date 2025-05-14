@@ -163,6 +163,7 @@ jobs:
               base_name = get_base_name(repo.name)
               
               repos_with_data.append((repo, significance, base_name, readme_content))
+              print(f"Adding {repo.name}: {significance} {base_name}")
               
           # Group repositories by base name
           repos_by_base_name = defaultdict(list)
