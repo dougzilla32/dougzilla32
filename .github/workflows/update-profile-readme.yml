@@ -201,19 +201,24 @@ jobs:
                       # Get repository topics/tags
                       topics = repo.get_topics()
                       
-                      # Try to extract title from the first line of README
+                      # Default title is the repository name
                       title = repo.name
                       
-                      # Look for the first non-empty line that starts with # 
-                      lines = readme_content.strip().split('\n')
-                      for line in lines:
-                          line = line.strip()
-                          if line and line.startswith('# '):
-                              potential_title = line[2:].strip()
+                      # Strip any leading whitespace to find the first real line
+                      readme_content_stripped = readme_content.lstrip()
+                      
+                      # Check if the first line is a # title
+                      if readme_content_stripped.startswith('# '):
+                          # Extract title from the first line
+                          first_line_end = readme_content_stripped.find('\n')
+                          if first_line_end > 0:
+                              potential_title = readme_content_stripped[2:first_line_end].strip()
                               # Only use the title if it somewhat matches the repo name
                               if title_matches_repo_name(potential_title, repo.name):
                                   title = potential_title
-                              break
+                                  print(f"Using title from README for {repo.name}: '{title}'")
+                              else:
+                                  print(f"Title doesn't match for {repo.name}: '{potential_title}'")
                       
                       # Add to main README
                       if repo.private:
@@ -244,13 +249,17 @@ jobs:
                               
                           repo_info += "---\n\n"
                           
-                          # Find the first heading in the README
-                          title_match = re.search(r'^# .+?\n', readme_content, re.MULTILINE)
-                          
-                          # Save the individual README file, replacing the original title to avoid duplication
-                          if title_match:
-                              modified_readme = readme_content.replace(title_match.group(0), repo_info, 1)
+                          # Check if the first real line is a title
+                          if readme_content_stripped.startswith('# '):
+                              first_line_end = readme_content_stripped.find('\n')
+                              # Replace just the first title line
+                              if first_line_end > 0:
+                                  first_title_line = readme_content_stripped[:first_line_end+1]
+                                  modified_readme = readme_content.replace(first_title_line, repo_info, 1)
+                              else:
+                                  modified_readme = repo_info + readme_content[2:]  # Skip the # 
                           else:
+                              # No title at the start, just prepend our info
                               modified_readme = repo_info + readme_content
                           
                           with open(f'{project_readmes_dir}/{repo.name}.md', 'w') as f:
