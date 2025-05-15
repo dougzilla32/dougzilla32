@@ -37,12 +37,12 @@ jobs:
           import glob
           from difflib import SequenceMatcher
           from collections import defaultdict
-
+          
           # Initialize GitHub client
           token = os.environ['GITHUB_TOKEN']
           g = Github(token)
           user = g.get_user()
-
+          
           def calculate_significance(repo):
               # Base score
               score = 0
@@ -64,20 +64,27 @@ jobs:
               # Size has some weight
               score += min(100, repo.size / 1000)  # Cap at 100 points for size
               
+              # Get all topics for checking tags
+              topics = repo.get_topics()
+              
               # Custom tag in topics can override
-              if 'significance:high' in repo.get_topics():
+              if 'significance:high' in topics:
                   score += 1000
-              elif 'significance:medium' in repo.get_topics():
+              elif 'significance:medium' in topics:
                   score += 500
-              elif 'significance:low' in repo.get_topics():
+              elif 'significance:low' in topics:
                   score -= 500
+              
+              # Additional profile specific tags
+              if 'profile:highlight' in topics:
+                  score += 2000  # Highest priority for highlighted repositories
               
               # Private repos might be more significant for professional work
               if repo.private:
                   score += 50
               
               return score
-
+          
           def get_base_name(repo_name):
               # Strip common prefixes/suffixes and extract the core name
               # This helps group repositories like SweepData, SweepNPark, etc.
@@ -94,7 +101,7 @@ jobs:
               
               # Default to the first 5 characters if no pattern matches
               return repo_name[:5] if len(repo_name) > 5 else repo_name
-
+          
           def title_matches_repo_name(title, repo_name):
               # Check if the title meaningfully matches the repository name
               # Using string similarity and common word detection
@@ -124,7 +131,7 @@ jobs:
                   return True
                   
               return False
-
+          
           def extract_image_references(markdown_content):
               """Extract image references from markdown content"""
               # Regular expression for Markdown image syntax: ![alt text](path/to/image.png)
@@ -145,7 +152,7 @@ jobs:
                              and not img.startswith('https://')]
               
               return local_images
-
+          
           def download_file_from_repo(repo, file_path, save_path):
               """Download a file from the repository using Git blob API and save it locally"""
               import os
@@ -179,7 +186,7 @@ jobs:
               except Exception as e:
                   print(f"Error downloading {file_path}: {str(e)}")
                   return False
-
+          
           def update_image_references(markdown_content, repo_name, has_subdirectory):
               """Update image references in markdown to point to the new location"""
               
@@ -223,23 +230,31 @@ jobs:
               )
               
               return content
-
+          
           # Create directory for individual READMEs if it doesn't exist
           project_readmes_dir = 'profile-repo/project-readmes'
           os.makedirs(project_readmes_dir, exist_ok=True)
-
+          
           # Track repositories to know which README files should be kept
           all_repo_names = set()
           private_repo_names = set()
-
+          
           # Get all repositories, filter and calculate significance
           repos_with_data = []
           for repo in user.get_repos():
+              # Get repository topics/tags first so we can check for exclusion tag
+              topics = repo.get_topics()
+              
+              # Skip repositories that have the 'profile:skip' tag
+              if 'profile:skip' in topics:
+                  print(f"Skipping {repo.name}: Has 'profile:skip' tag")
+                  continue
+                  
               # Skip repositories that are:
               # 1. Without description
-              # 2. The profile repository
+              # 2. The PromiseKit repository
               # 3. Forked repositories
-              if not repo.description or repo.name == 'dougzilla32' or repo.fork:
+              if not repo.description or repo.name == 'PromiseKit' or repo.fork:
                   continue
                   
               # Check if repository has a README
@@ -268,7 +283,7 @@ jobs:
           repos_by_base_name = defaultdict(list)
           for repo, significance, base_name, readme_content in repos_with_data:
               repos_by_base_name[base_name].append((repo, significance, readme_content))
-
+          
           # Sort base name groups by their highest significance score
           base_names_by_significance = []
           for base_name, repos in repos_by_base_name.items():
@@ -437,7 +452,7 @@ jobs:
               # Add a divider after each group (except the last)
               if base_name != base_names_by_significance[-1][0]:
                   main_readme += "---\n\n"
-
+          
           # Cleanup: Remove README files and directories for repositories that no longer exist or are public
           # List all markdown files in the project_readmes directory
           existing_readme_files = glob.glob(f'{project_readmes_dir}/*.md')
@@ -449,21 +464,21 @@ jobs:
               if repo_name not in private_repo_names:
                   print(f"Removing README for public or removed repository: {repo_name}")
                   os.remove(readme_file)
-
+          
           # Also check for subdirectories that need to be removed
           subdirs = [d for d in os.listdir(project_readmes_dir) 
                     if os.path.isdir(os.path.join(project_readmes_dir, d))]
-
+          
           for subdir in subdirs:
               if subdir not in private_repo_names:
                   import shutil
                   print(f"Removing subdirectory for public or removed repository: {subdir}")
                   shutil.rmtree(os.path.join(project_readmes_dir, subdir))
-
+          
           # Add footer to main README
           main_readme += f"\n\n*Last updated: {datetime.now().strftime('%Y-%m-%d')}*\n"
           main_readme += "\n\nThis profile is automatically generated from my repository information"
-
+          
           # Write the main README file
           with open('profile-repo/README.md', 'w') as f:
               f.write(main_readme)
