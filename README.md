@@ -4,18 +4,6 @@ Welcome to my GitHub profile! Below you'll find descriptions of my projects, inc
 
 ## Projects
 
-### [PromiseKit](https://github.com/mxcl/PromiseKit)
-
-Promises for Swift & ObjC.
-
-Technologies: `swift`, `objc`, `promises`
-
-### [PromiseKitCoreCancel](https://github.com/dougzilla32/PromiseKitCoreCancel)
-
-'Cancel' for PromiseKit -- mirror of old PromiseKit fork with CoreCancel branch
-
----
-
 ### [WeatherBar: A macOS Weather App with Elegant UI](./project-readmes/WeatherBar/WeatherBar.md)
 
 WeatherBar is a lightweight, elegant macOS menu bar application that provides quick access to weather information directly from your desktop.
@@ -84,6 +72,12 @@ SearchBox is a subclass of NSSearchField that provides a completions drop-down m
 
 ---
 
+### [PromiseKitCoreCancel](https://github.com/dougzilla32/PromiseKitCoreCancel)
+
+'Cancel' for PromiseKit -- mirror of old PromiseKit fork with CoreCancel branch
+
+---
+
 ### [ScrollingDateAndTimePicker](https://github.com/dougzilla32/ScrollingDateAndTimePicker)
 
 Date and time picker control that scrolls horizontally
@@ -96,7 +90,7 @@ I am Doug's Clone! I'm excited to discuss my professional background and experti
 
 
 
-*Last updated: 2025-05-14*
+*Last updated: 2025-05-15*
 
 
 This profile is automatically generated from my repository information
