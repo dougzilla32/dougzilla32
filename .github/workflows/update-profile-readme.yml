@@ -68,15 +68,15 @@ jobs:
               topics = repo.get_topics()
               
               # Custom tag in topics can override
-              if 'significance:high' in topics:
+              if 'significance-high' in topics:
                   score += 1000
-              elif 'significance:medium' in topics:
+              elif 'significance-medium' in topics:
                   score += 500
-              elif 'significance:low' in topics:
+              elif 'significance-low' in topics:
                   score -= 500
               
               # Additional profile specific tags
-              if 'profile:highlight' in topics:
+              if 'profile-highlight' in topics:
                   score += 2000  # Highest priority for highlighted repositories
               
               # Private repos might be more significant for professional work
@@ -187,6 +187,10 @@ jobs:
                   print(f"Error downloading {file_path}: {str(e)}")
                   return False
           
+          def filter_display_topics(topics):
+              """Filter out internal organization topics that shouldn't be displayed"""
+              return [topic for topic in topics if not topic.startswith(('significance-', 'profile-'))]
+              
           def update_image_references(markdown_content, repo_name, has_subdirectory):
               """Update image references in markdown to point to the new location"""
               
@@ -245,16 +249,16 @@ jobs:
               # Get repository topics/tags first so we can check for exclusion tag
               topics = repo.get_topics()
               
-              # Skip repositories that have the 'profile:skip' tag
-              if 'profile:skip' in topics:
-                  print(f"Skipping {repo.name}: Has 'profile:skip' tag")
+              # Skip repositories that have the 'profile-skip' tag
+              if 'profile-skip' in topics:
+                  print(f"Skipping {repo.name}: Has 'profile-skip' tag")
                   continue
                   
               # Skip repositories that are:
               # 1. Without description
               # 2. The PromiseKit repository
               # 3. Forked repositories
-              if not repo.description or repo.name == 'PromiseKit' or repo.fork:
+              if not repo.description or repo.fork:
                   continue
                   
               # Check if repository has a README
@@ -278,6 +282,27 @@ jobs:
               
               repos_with_data.append((repo, significance, base_name, readme_content))
               print(f"Adding {repo.name}: {significance} {base_name}")
+          
+          # Get repositories where the user is a collaborator but not the owner
+          collaborator_repos = []
+          for repo in g.get_user().get_repos(affiliation='collaborator'):
+              # Skip repositories without description or README
+              if not repo.description:
+                  continue
+                  
+              # Check if repository has a README
+              try:
+                  readme_file = repo.get_readme()
+                  readme_content = base64.b64decode(readme_file.content).decode('utf-8')
+              except:
+                  # Skip repositories without README
+                  continue
+                  
+              # Store the repository owner's login name for display
+              owner_login = repo.owner.login
+              
+              collaborator_repos.append((repo, owner_login))
+              print(f"Adding collaborator repo: {repo.name} (owned by {owner_login})")
               
           # Group repositories by base name
           repos_by_base_name = defaultdict(list)
@@ -298,6 +323,13 @@ jobs:
           main_readme += "Welcome to my GitHub profile! Below you'll find descriptions of my projects, including private repositories. "
           main_readme += "For public repositories, links go directly to the GitHub repository. "
           main_readme += "For private repositories, links go to documentation stored in this profile repository.\n\n"
+          
+          # Add navigation link to collaborator section
+          if collaborator_repos:
+              main_readme += "**Navigation:**\n"
+              main_readme += "- [My Projects](#projects)\n"
+              main_readme += "- [Repositories I Contribute To](#repositories-i-contribute-to)\n\n"
+          
           main_readme += "## Projects\n\n"
           
           # Process each group of repositories in order of significance
@@ -354,8 +386,10 @@ jobs:
                       
                       main_readme += f"{description}\n\n"
                       
-                      if topics:
-                          main_readme += 'Technologies: ' + ', '.join(f'`{topic}`' for topic in topics) + '\n\n'
+                      # Filter and display topics
+                      filtered_topics = filter_display_topics(topics)
+                      if filtered_topics:
+                          main_readme += 'Technologies: ' + ', '.join(f'`{topic}`' for topic in filtered_topics) + '\n\n'
                           
                       # Note if it's private (without the "documentation available" text)
                       if repo.private:
@@ -372,8 +406,10 @@ jobs:
                           repo_info += f"{description}\n\n"
                           repo_info += "> 🔒 Private Repository\n\n"
                           
-                          if topics:
-                              repo_info += 'Technologies: ' + ', '.join(f'`{topic}`' for topic in topics) + '\n\n'
+                          # Filter and display topics
+                          filtered_topics = filter_display_topics(topics)
+                          if filtered_topics:
+                              repo_info += 'Technologies: ' + ', '.join(f'`{topic}`' for topic in filtered_topics) + '\n\n'
                               
                           repo_info += "---\n\n"
                           
@@ -453,6 +489,35 @@ jobs:
               if base_name != base_names_by_significance[-1][0]:
                   main_readme += "---\n\n"
           
+          # Add the collaborator section if there are any collaborator repositories
+          if collaborator_repos:
+              main_readme += "## Repositories I Contribute To\n\n"
+              main_readme += "These are repositories owned by others where I am a collaborator.\n\n"
+              
+              # Sort collaborator repositories alphabetically by name
+              collaborator_repos.sort(key=lambda x: x[0].name)
+              
+              # Process each collaborator repository
+              for repo, owner_login in collaborator_repos:
+                  try:
+                      # Get the repository description from the About section
+                      description = repo.description
+                      
+                      # Add to main README
+                      main_readme += f"### [{repo.name}]({repo.html_url})\n\n"
+                      main_readme += f"{description}\n\n"
+                      
+                      # Filter and display topics
+                      filtered_topics = filter_display_topics(topics)
+                      if filtered_topics:
+                          main_readme += 'Technologies: ' + ', '.join(f'`{topic}`' for topic in filtered_topics) + '\n\n'
+                      
+                      # Add repository owner info
+                      main_readme += f"> 👤 Owned by [{owner_login}](https://github.com/{owner_login})\n\n"
+                  except Exception as e:
+                      print(f"Error processing collaborator repo {repo.name}: {str(e)}")
+                      continue
+          
           # Cleanup: Remove README files and directories for repositories that no longer exist or are public
           # List all markdown files in the project_readmes directory
           existing_readme_files = glob.glob(f'{project_readmes_dir}/*.md')
@@ -494,6 +559,7 @@ jobs:
                   
           print(f"\nTotal repositories included: {len(repos_with_data)}")
           print(f"Private repositories included: {len(private_repo_names)}")
+          print(f"Collaborator repositories included: {len(collaborator_repos)}")
           EOF
           
           python update_readme.py
