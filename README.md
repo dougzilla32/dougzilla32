@@ -2,19 +2,21 @@
 
 Welcome to my GitHub profile! Below you'll find descriptions of my projects, including private repositories. For public repositories, links go directly to the GitHub repository. For private repositories, links go to documentation stored in this profile repository.
 
+**Navigation:**
+- [My Projects](#projects)
+- [Repositories I Contribute To](#repositories-i-contribute-to)
+
 ## Projects
 
-### [WeatherBar: A macOS Weather App with Elegant UI](./project-readmes/WeatherBar/WeatherBar.md)
+### [PromiseKit](https://github.com/mxcl/PromiseKit)
 
-WeatherBar is a lightweight, elegant macOS menu bar application that provides quick access to weather information directly from your desktop.
+Promises for Swift & ObjC.
 
-> 🔒 Private repository
+Technologies: `swift`, `objc`, `promises`
 
-### [NOAA-Weather-Bar](./project-readmes/NOAA-Weather-Bar.md)
+### [PromiseKitCoreCancel](https://github.com/dougzilla32/PromiseKitCoreCancel)
 
-Temp and forecast in the Mac's menu bar
-
-> 🔒 Private repository
+'Cancel' for PromiseKit -- mirror of old PromiseKit fork with CoreCancel branch
 
 ---
 
@@ -32,6 +34,14 @@ Issue tracking for the SweepNPark app
 
 ---
 
+### [WeatherBar: A macOS Weather App with Elegant UI](./project-readmes/WeatherBar/WeatherBar.md)
+
+WeatherBar is a lightweight, elegant macOS menu bar application that provides quick access to weather information directly from your desktop.
+
+> 🔒 Private repository
+
+---
+
 ### [TranslateGPT](./project-readmes/TranslateGPT.md)
 
 TranslateGPT is an iOS application that enables real-time, bidirectional language translation for natural conversations between speakers of different languages.
@@ -46,35 +56,15 @@ This is a Swift port of the original "CustomMenus" Objective-C sample project fr
 
 ---
 
-### [GrabAttachments](./project-readmes/GrabAttachments.md)
-
-Bash script to automatically download attachments from gmail messages.  Uses curl, wget and mpack.
-
-> 🔒 Private repository
-
----
-
 ### [AsyncCancellation](https://github.com/dougzilla32/AsyncCancellation)
 
 This project contains experimental code demonstrating proposed 'cancellation' abilities for the upcoming async/await Swift language feature.
 
 ---
 
-### [MazeMaker](https://github.com/dougzilla32/MazeMaker)
-
-A Swift program that generates random mazes using an elegant algorithm.
-
----
-
 ### [SearchBox](https://github.com/dougzilla32/SearchBox)
 
 SearchBox is a subclass of NSSearchField that provides a completions drop-down menu with modernized interactions similar to the google search bar. 
-
----
-
-### [PromiseKitCoreCancel](https://github.com/dougzilla32/PromiseKitCoreCancel)
-
-'Cancel' for PromiseKit -- mirror of old PromiseKit fork with CoreCancel branch
 
 ---
 
@@ -88,9 +78,19 @@ Date and time picker control that scrolls horizontally
 
 I am Doug's Clone! I'm excited to discuss my professional background and expertise, and I'm ready to answer any questions regarding my qualifications, including skills, experience, and certifications.
 
+## Repositories I Contribute To
+
+These are repositories owned by others where I am a collaborator.
+
+### [PromiseKit](https://github.com/mxcl/PromiseKit)
+
+Promises for Swift & ObjC.
+
+> 👤 Owned by [mxcl](https://github.com/mxcl)
 
 
-*Last updated: 2025-05-15*
+
+*Last updated: 2025-05-16*
 
 
 This profile is automatically generated from my repository information
