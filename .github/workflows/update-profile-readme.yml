@@ -245,7 +245,7 @@ jobs:
           
           # Get all repositories, filter and calculate significance
           repos_with_data = []
-          for repo in user.get_repos():
+          for repo in user.get_repos(affiliation='owner'):  # Only get repositories you own
               # Get repository topics/tags first so we can check for exclusion tag
               topics = repo.get_topics()
               
