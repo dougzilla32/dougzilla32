@@ -90,7 +90,7 @@ Promises for Swift & ObjC.
 
 
 
-*Last updated: 2025-05-18*
+*Last updated: 2025-05-25*
 
 
 This profile is automatically generated from my repository information
