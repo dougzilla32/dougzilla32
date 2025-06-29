@@ -42,6 +42,12 @@ WeatherBar is a lightweight, elegant macOS menu bar application that provides qu
 
 ---
 
+### [CustomMenus](https://github.com/dougzilla32/CustomMenus)
+
+This is a Swift port of the original "CustomMenus" Objective-C sample project from Apple.  It demonstrates a custom search completions popup window, and also demonstrates a popup menu with a custom view. 
+
+---
+
 ### [TranslateGPT](./project-readmes/TranslateGPT.md)
 
 TranslateGPT is an iOS application that enables real-time, bidirectional language translation for natural conversations between speakers of different languages.
@@ -50,21 +56,15 @@ TranslateGPT is an iOS application that enables real-time, bidirectional languag
 
 ---
 
-### [CustomMenus](https://github.com/dougzilla32/CustomMenus)
+### [SearchBox](https://github.com/dougzilla32/SearchBox)
 
-This is a Swift port of the original "CustomMenus" Objective-C sample project from Apple.  It demonstrates a custom search completions popup window, and also demonstrates a popup menu with a custom view. 
+SearchBox is a subclass of NSSearchField that provides a completions drop-down menu with modernized interactions similar to the google search bar. 
 
 ---
 
 ### [AsyncCancellation](https://github.com/dougzilla32/AsyncCancellation)
 
 This project contains experimental code demonstrating proposed 'cancellation' abilities for the upcoming async/await Swift language feature.
-
----
-
-### [SearchBox](https://github.com/dougzilla32/SearchBox)
-
-SearchBox is a subclass of NSSearchField that provides a completions drop-down menu with modernized interactions similar to the google search bar. 
 
 ---
 
@@ -90,7 +90,7 @@ Promises for Swift & ObjC.
 
 
 
-*Last updated: 2025-06-22*
+*Last updated: 2025-06-29*
 
 
 This profile is automatically generated from my repository information
