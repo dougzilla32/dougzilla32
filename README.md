@@ -62,9 +62,25 @@ SearchBox is a subclass of NSSearchField that provides a completions drop-down m
 
 ---
 
+### [CancelForPromiseKit](https://github.com/cprkit/CancelForPromiseKit)
+
+CancelForPromiseKit provides clear and concise cancellation abilities for PromiseKit and for the PromiseKit Extensions. While PromiseKit includes basic support for cancellation, CancelForPromiseKit extends this to make cancelling promises and their associated tasks simple and straightforward.
+
+### [PromiseKit Cancel Extensions ![Build Status]](https://github.com/cprkit/Cancel)
+
+Cancel for PromiseKit extension
+
+---
+
 ### [AsyncCancellation](https://github.com/dougzilla32/AsyncCancellation)
 
 This project contains experimental code demonstrating proposed 'cancellation' abilities for the upcoming async/await Swift language feature.
+
+---
+
+### [AlienInvaders](https://github.com/MayaCodingClass/AlienInvaders)
+
+Alien Invaders -- Watch OUT!!!
 
 ---
 
@@ -78,9 +94,105 @@ Date and time picker control that scrolls horizontally
 
 I am Doug's Clone! I'm excited to discuss my professional background and expertise, and I'm ready to answer any questions regarding my qualifications, including skills, experience, and certifications.
 
+---
+
+### [CancelForPromiseKit Foundation Extensions](https://github.com/cprkit/CPKFoundation)
+
+This project is an extension of CancelForPromiseKit that adds cancellable promises to PromiseKit's Foundation extension.
+
+---
+
+### [CancelForPromiseKit Alamofire Extensions](https://github.com/cprkit/CPKAlamofire)
+
+This project is an extension of CancelForPromiseKit that adds cancellable promises to PromiseKit's Alamofire Extension.
+
+---
+
+### [CancelForPromiseKit CoreLocation Extensions](https://github.com/cprkit/CPKCoreLocation)
+
+This project is an extension of CancelForPromiseKit that adds cancellable promises to PromiseKit's CoreLocation extension.
+
 ## Repositories I Contribute To
 
 These are repositories owned by others where I am a collaborator.
+
+### [Alamofire-](https://github.com/cprkit/Alamofire-)
+
+Promises for Swift & ObjC
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [Bolts](https://github.com/cprkit/Bolts)
+
+Promises for Swift & ObjC
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [CPKAlamofire](https://github.com/cprkit/CPKAlamofire)
+
+This project is an extension of CancelForPromiseKit that adds cancellable promises to PromiseKit's Alamofire Extension.
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [CPKCoreLocation](https://github.com/cprkit/CPKCoreLocation)
+
+This project is an extension of CancelForPromiseKit that adds cancellable promises to PromiseKit's CoreLocation extension.
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [CPKFoundation](https://github.com/cprkit/CPKFoundation)
+
+This project is an extension of CancelForPromiseKit that adds cancellable promises to PromiseKit's Foundation extension.
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [Cancel](https://github.com/cprkit/Cancel)
+
+Cancel for PromiseKit extension
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [CancelForPromiseKit](https://github.com/cprkit/CancelForPromiseKit)
+
+CancelForPromiseKit provides clear and concise cancellation abilities for PromiseKit and for the PromiseKit Extensions. While PromiseKit includes basic support for cancellation, CancelForPromiseKit extends this to make cancelling promises and their associated tasks simple and straightforward.
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [CoreLocation](https://github.com/cprkit/CoreLocation)
+
+Promises for Swift & ObjC
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [Foundation](https://github.com/cprkit/Foundation)
+
+Promises for Swift & ObjC
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [HomeKit](https://github.com/cprkit/HomeKit)
+
+PromiseKit extensions for Apple’s HomeKit
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [MapKit](https://github.com/cprkit/MapKit)
+
+Promises for Swift & ObjC
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [OMGHTTPURLRQ-](https://github.com/cprkit/OMGHTTPURLRQ-)
+
+Promises for Swift & ObjC
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [PromiseKit](https://github.com/cprkit/PromiseKit)
+
+Promises for Swift & ObjC.
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
 
 ### [PromiseKit](https://github.com/mxcl/PromiseKit)
 
@@ -88,9 +200,21 @@ Promises for Swift & ObjC.
 
 > 👤 Owned by [mxcl](https://github.com/mxcl)
 
+### [StoreKit](https://github.com/cprkit/StoreKit)
+
+Promises for Swift & ObjC
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
+
+### [UIKit](https://github.com/cprkit/UIKit)
+
+Promises for Swift & ObjC
+
+> 👤 Owned by [cprkit](https://github.com/cprkit)
 
 
-*Last updated: 2025-08-24*
+
+*Last updated: 2025-09-07*
 
 
 This profile is automatically generated from my repository information
