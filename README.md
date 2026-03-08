@@ -8,18 +8,6 @@ Welcome to my GitHub profile! Below you'll find descriptions of my projects, inc
 
 ## Projects
 
-### [PromiseKit](https://github.com/mxcl/PromiseKit)
-
-Promises for Swift & ObjC.
-
-Technologies: `swift`, `objc`, `promises`
-
-### [PromiseKitCoreCancel](https://github.com/dougzilla32/PromiseKitCoreCancel)
-
-'Cancel' for PromiseKit -- mirror of old PromiseKit fork with CoreCancel branch
-
----
-
 ### [SweepNPark](./project-readmes/SweepNPark/SweepNPark.md)
 
 Sweep N' Park is a navigation app that helps users find parking in San Francisco by visualizing street sweep and tow-away restrictions on a map.
@@ -68,6 +56,12 @@ This project contains experimental code demonstrating proposed 'cancellation' ab
 
 ---
 
+### [PromiseKitCoreCancel](https://github.com/dougzilla32/PromiseKitCoreCancel)
+
+'Cancel' for PromiseKit -- mirror of old PromiseKit fork with CoreCancel branch
+
+---
+
 ### [ScrollingDateAndTimePicker](https://github.com/dougzilla32/ScrollingDateAndTimePicker)
 
 Date and time picker control that scrolls horizontally
@@ -90,7 +84,7 @@ Promises for Swift & ObjC.
 
 
 
-*Last updated: 2026-03-01*
+*Last updated: 2026-03-08*
 
 
 This profile is automatically generated from my repository information
