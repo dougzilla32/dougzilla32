@@ -22,6 +22,14 @@ Issue tracking for the SweepNPark app
 
 ---
 
+### [Mouse Catch — Student Guide](./project-readmes/mouse-catch.md)
+
+Mouse Catch game
+
+> 🔒 Private repository
+
+---
+
 ### [WeatherBar: A macOS Weather App with Elegant UI](./project-readmes/WeatherBar/WeatherBar.md)
 
 WeatherBar is a lightweight, elegant macOS menu bar application that provides quick access to weather information directly from your desktop.
@@ -84,7 +92,7 @@ Promises for Swift & ObjC.
 
 
 
-*Last updated: 2026-03-22*
+*Last updated: 2026-03-29*
 
 
 This profile is automatically generated from my repository information
