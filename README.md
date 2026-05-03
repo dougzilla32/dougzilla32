@@ -30,17 +30,17 @@ WeatherBar is a lightweight, elegant macOS menu bar application that provides qu
 
 ---
 
+### [CustomMenus](https://github.com/dougzilla32/CustomMenus)
+
+This is a Swift port of the original "CustomMenus" Objective-C sample project from Apple.  It demonstrates a custom search completions popup window, and also demonstrates a popup menu with a custom view. 
+
+---
+
 ### [Mouse Catch — Student Guide](./project-readmes/mouse-catch.md)
 
 Mouse Catch game
 
 > 🔒 Private repository
-
----
-
-### [CustomMenus](https://github.com/dougzilla32/CustomMenus)
-
-This is a Swift port of the original "CustomMenus" Objective-C sample project from Apple.  It demonstrates a custom search completions popup window, and also demonstrates a popup menu with a custom view. 
 
 ---
 
@@ -98,7 +98,7 @@ Multi-player game written with friends at U.C. Berkeley decades ago. Making a mo
 
 
 
-*Last updated: 2026-04-26*
+*Last updated: 2026-05-03*
 
 
 This profile is automatically generated from my repository information
