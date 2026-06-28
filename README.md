@@ -36,17 +36,17 @@ This is a Swift port of the original "CustomMenus" Objective-C sample project fr
 
 ---
 
-### [Mouse Catch — Student Guide](./project-readmes/mouse-catch.md)
+### [TranslateGPT](./project-readmes/TranslateGPT.md)
 
-Mouse Catch game
+TranslateGPT is an iOS application that enables real-time, bidirectional language translation for natural conversations between speakers of different languages.
 
 > 🔒 Private repository
 
 ---
 
-### [TranslateGPT](./project-readmes/TranslateGPT.md)
+### [Mouse Catch — Student Guide](./project-readmes/mouse-catch.md)
 
-TranslateGPT is an iOS application that enables real-time, bidirectional language translation for natural conversations between speakers of different languages.
+Mouse Catch game
 
 > 🔒 Private repository
 
@@ -98,7 +98,7 @@ Multi-player game written with friends at U.C. Berkeley decades ago. Making a mo
 
 
 
-*Last updated: 2026-06-21*
+*Last updated: 2026-06-28*
 
 
 This profile is automatically generated from my repository information
