@@ -44,17 +44,17 @@ TranslateGPT is an iOS application that enables real-time, bidirectional languag
 
 ---
 
+### [SearchBox](https://github.com/dougzilla32/SearchBox)
+
+SearchBox is a subclass of NSSearchField that provides a completions drop-down menu with modernized interactions similar to the google search bar. 
+
+---
+
 ### [Mouse Catch — Student Guide](./project-readmes/mouse-catch.md)
 
 Mouse Catch game
 
 > 🔒 Private repository
-
----
-
-### [SearchBox](https://github.com/dougzilla32/SearchBox)
-
-SearchBox is a subclass of NSSearchField that provides a completions drop-down menu with modernized interactions similar to the google search bar. 
 
 ---
 
@@ -98,7 +98,7 @@ Multi-player game written with friends at U.C. Berkeley decades ago. Making a mo
 
 
 
-*Last updated: 2026-07-19*
+*Last updated: 2026-07-26*
 
 
 This profile is automatically generated from my repository information
